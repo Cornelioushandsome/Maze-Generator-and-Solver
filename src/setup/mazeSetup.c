@@ -63,7 +63,9 @@ void freeMaze(Maze *maze){
   if (maze){
     if (maze->cells){
       free(maze->cells);
+      maze->cells = NULL;
     }
     free(maze);
+    maze = NULL;
   }
 }
