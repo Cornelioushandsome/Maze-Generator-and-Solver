@@ -4,13 +4,14 @@
 
 
 Maze *allocMaze(int width, int height){
+
   Maze *maze = malloc(sizeof(Maze));
-  if (!maze){
-    return NULL;
-  }
+  if (!maze) exit(EXIT_FAILURE);
+
   maze->cells = malloc(sizeof(char) * width * height);
   if (!maze->cells){
-    return NULL;
+    free(maze);
+    exit(EXIT_FAILURE);
   }
 
   return maze;
@@ -18,9 +19,7 @@ Maze *allocMaze(int width, int height){
 }
 
 Maze *initMaze(int width, int height){
-  if (width < MIN_WIDTH || width > MAX_WIDTH || height < MIN_HEIGHT || height > MAX_HEIGHT){
-    return NULL;
-  }
+  if (!isValidDimensions(width, height)) return NULL;
   if (width % 2 == 0){
     width++;
     printf("Changed width to %d for better maze generation...\n", width);
@@ -31,6 +30,10 @@ Maze *initMaze(int width, int height){
   }
 
   Maze *newMaze = allocMaze(width, height);
+  if (!newMaze){
+    fprintf(stderr, "initMaze()->allocMaze(): failed to allocate maze\n");
+    exit(EXIT_FAILURE);
+  }
   newMaze->width = width;
   newMaze->height = height;
 
@@ -40,17 +43,12 @@ Maze *initMaze(int width, int height){
 
 
 void renderMaze(Maze *maze){
-  if (!maze){
-    fprintf(stderr, "renderMaze: maze not allocated\n");
+  if (!isValidMaze(maze)){
+    fprintf(stderr, "renderMaze: Invalid maze\n");
     exit(EXIT_FAILURE);
   }
-  if (!maze->cells){
-    fprintf(stderr, "renderMaze: maze->cells not allocated\n");
-    exit(EXIT_FAILURE);
-  }
-
   int i;
-  for (i = 0; i<maze->width * maze->height; i++){
+  for (i = 0; i < maze->width * maze->height; i++){
     if (i % maze->width == 0) putchar('\n');
     putchar(maze->cells[i]);
   }
@@ -68,4 +66,5 @@ void freeMaze(Maze *maze){
     free(maze);
     maze = NULL;
   }
+  puts("called freeMaze");
 }

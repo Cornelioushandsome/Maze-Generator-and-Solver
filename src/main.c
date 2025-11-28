@@ -4,7 +4,7 @@
 
   TODO:
 - |->Learn how tf the makefile works
-  |->Create the shell
+  |->Fix the shell (help me plz)
   |->Implement algorithms
 
 

@@ -14,20 +14,26 @@ void setEnd(Maze *maze, int row, int col){
   *CELL(maze, row, col) = END;
 }
 
+int isValidDimensions(int width, int height){
+  if (width < MIN_WIDTH || width > MAX_WIDTH\
+      || height < MIN_HEIGHT || height > MAX_HEIGHT){
+    return FALSE; 
+  }
+  return TRUE;
+}
+
 int isValidMaze(Maze *maze){
-  if (!maze && !maze->cells){
-    return 0;
+  if (!maze || !maze->cells){
+    return FALSE;
   }
-  if (maze->width < MIN_WIDTH || maze->width > MAX_WIDTH\
-  || maze->height < MIN_HEIGHT || maze->width > MAX_HEIGHT){
-    return 0;
-  }
-  return 1;
+  return isValidDimensions(maze->width, maze->height);
 }
 
 int isValidCell(Maze *maze, int row, int col){
   if (col < 0 || col >= maze->width || row < 0 || row >= maze->height){
-    return 0;
+    return FALSE;
   }
-  return 1;
+  return TRUE;
 }
+
+

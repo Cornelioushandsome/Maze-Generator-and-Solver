@@ -64,6 +64,7 @@ char **mzsh_splitline(char* line){
   }
   tokens[position] = NULL;
   
+  
   return tokens;
 }
 
@@ -84,7 +85,7 @@ void mzsh_mainloop(void){
 
   }while(status == EXIT_SUCCESS);
 
-  mzsh_quit((char**) NULL);
+  //mzsh_quit((char**) NULL);
 }
 
 int mzsh_execute(char** args){

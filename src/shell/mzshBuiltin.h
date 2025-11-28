@@ -1,9 +1,7 @@
 #ifndef MZSH_BUILTIN_H
 #define MZSH_BUILTIN_H
 
-#define MZSH_COMMAND_BUFSIZ 32
-#define MZSH_DESCRIPTION_BUFSIZ 256
-#define MZSH_MAX_BUILTIN_COMMANDS 16
+
 
 #include "../utils/mazeUtils.h"
 
@@ -13,18 +11,32 @@ int mzsh_gen(char **args);
 int mzsh_solve(char **args);
 int mzsh_help(char **args);
 int mzsh_quit(char **args);
+int mzsh_render(char **args);
 
-//void handleGenPlain(Maze *maze);
+void helpInit(void);
+void helpGen(void);
+void helpSolve(void);
+void helpHelp(void); //....fr?
+void helpQuit(void);
+void helpRender(void);
 
-typedef struct{
-  char command[MZSH_COMMAND_BUFSIZ];
-  char description[MZSH_DESCRIPTION_BUFSIZ];
-  int (*function) (char **);
-}BuiltinCommand;
+int helpValid(char **args);
+
+
+void mzsh_genPlain(Maze *maze);
+
+
 
 extern BuiltinCommand BuiltinCommandList[];
+extern FunctionCommand GenerationCommandList[];
+
+BuiltinCommand *BuiltCommLookup(const char* command);
+FunctionCommand *FuncCommLookup(const char *command, FunctionCommand list[], const int n);
+
 int mzsh_launch(char **args);
-inline int NumBuiltin();
+
+
+
 
 
 
