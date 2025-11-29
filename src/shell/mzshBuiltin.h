@@ -19,13 +19,11 @@ void helpSolve(void);
 void helpHelp(void); //....fr?
 void helpQuit(void);
 void helpRender(void);
-
 int helpValid(char **args);
+inline void promptHelp(void (*helpfunc)(void));
+//generation
 
-
-void mzsh_genPlain(Maze *maze);
-
-
+//solving
 
 extern BuiltinCommand BuiltinCommandList[];
 extern FunctionCommand GenerationCommandList[];

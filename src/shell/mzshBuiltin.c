@@ -4,6 +4,7 @@
 
 #include "../setup/mazeSetup.h"
 #include "../generation/genAlgorithms.h"
+#include "../solver/solveAlgorithms.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,12 +22,28 @@ BuiltinCommand BuiltinCommandList[] = {
 };
 
 FunctionCommand GenerationCommandList[] = {
-  {"plain", "Generate a plain maze", &mzsh_genPlain},
+  {"Plain"    , "Generate a plain maze with no inner-walls",  &plainGenerate},
+  {"prim"     , "Create a maze using Prim's algorithm. \
+Leads to short dead-ends",                                    &primGenerate},
+  {"kruskal"  , "Create a maze using Kruskal's algorithm. \
+Creates many short dead-ends",                                &kruskalGenerate},
+  {"recursive", "Create a maze using recursive-backtracking. \
+Leads to longer paths",                                       &recursiveBacktracking},
 };
 
 FunctionCommand SolveCommandList[] = {
-
+  {"astar"    , "Finds the best path using cost and heuristics", &aStarSolver},
+  {"dijkstra" , "Find the best path using cost and weights",     &dijkstraSolver},
+  {"breadth"  , "Find the best path by exploring every \
+direction equally.",                                             &breadthFirstSearch},
+  {"recursive", "Find any path by using \
+recursive-backtracking",                                         &depthFirstSearch}
 };
+inline void promptHelp(void (*helpfunc)(void)){
+  puts("Invalid input.");
+  (helpfunc)();
+  puts("Please try again.\n");
+}
 
 
 inline int NumBuiltin(){ //not defined in header because of errors
@@ -42,19 +59,22 @@ inline int NumSolveCommand(){
 }
 
 BuiltinCommand *BuiltCommLookup(const char *command){
+  int len = strlen(command);
   for (int i = 0; i<NumBuiltin(); i++){
     if (strcmp(command, BuiltinCommandList[i].command) == 0\
-        ||(strlen(command) == 1 && (*command) == *(BuiltinCommandList[i].command))){
+        ||(len == 1 && (*command) == *(BuiltinCommandList[i].command))){
       return BuiltinCommandList+i;
     }
   }
   return NULL;
 }
+
 FunctionCommand *FuncCommLookup(const char *command, FunctionCommand list[], const int n){
-  //if (!command) return NULL;
+  int len = strlen(command);
+
   for (int i = 0; i<n; i++){
     if (strcmp(command, list[i].command) == 0\
-        || (strlen(command) == 1 && ((*command) == *(list[i].command)))){
+        || (len == 1 && ((*command) == *(list[i].command)))){
       return list+i;
     }
   }
@@ -99,13 +119,14 @@ int mzsh_gen(char **args){
     return EXIT_FAILURE;
   }
   if (!args[1]){
-    puts("Invalid input for <GEN>. Please try again");
+    promptHelp(helpGen);
     return 0;
   }
   
   FunctionCommand *command = FuncCommLookup(args[1], GenerationCommandList, NumGenCommand());
   if (!command){
-    puts("Invalid input for <GEN>. Please try again");
+    promptHelp(helpGen);
+
     //just try again
     return 0;
   }
@@ -119,9 +140,22 @@ int mzsh_solve(char **args){
     helpSolve();
     return 0;
   }
-  (void) args;
+  if (!GLOBAL_MAZE || !isValidMaze(GLOBAL_MAZE) || !GLOBAL_MAZE->start || !GLOBAL_MAZE->end){
+    puts("not initialized or generated yet");
+    return EXIT_FAILURE;
+  }
+  if (!args[1]){
+    promptHelp(helpSolve);
 
-  puts("We are handling SOLVE");
+    return 0; //prompt again
+  }
+  FunctionCommand *command = FuncCommLookup(args[1], SolveCommandList, NumSolveCommand());
+  if (!command){
+    promptHelp(helpSolve);
+    return 0; //prompt again
+  }
+  (*(command->function))(GLOBAL_MAZE);
+  
   return 0;
 }
 
@@ -135,7 +169,7 @@ int mzsh_render(char **args){
     puts("Maze not initialized yet");
     return EXIT_FAILURE;
   }
-  if (!isValidMaze(GLOBAL_MAZE)){
+  if (!isValidMaze(GLOBAL_MAZE) || !GLOBAL_MAZE->start || !GLOBAL_MAZE->end){
     freeMaze(GLOBAL_MAZE);
     puts("Invalid maze");
     return EXIT_FAILURE;
@@ -164,7 +198,7 @@ int mzsh_help(char **args){
   puts("Welcome to version 0.1 of MZSH: The maze generator and solver that provides a shell-interface");
   puts("Here is a list of all the available commands:\n");
   for (int i = 0; i<NumBuiltin(); i++){
-    printf("\t%s\t-\t", BuiltinCommandList[i].command);
+    printf("%-7s%s%7s\n", "=====", BuiltinCommandList[i].command, "=====");
     (*(BuiltinCommandList[i].helpMenu))();
   }
 
@@ -187,46 +221,43 @@ int mzsh_quit(char **args){
 }
 
 
-void mzsh_genPlain(Maze *maze){
-  //maybe unnecessary?
-  if (!maze){
-    puts("Maze not initialized yet");
-    exit(EXIT_FAILURE);
-  }
-  if (!isValidMaze(maze)){
-    freeMaze(maze);
-    puts("Invalid maze");
-    exit(EXIT_FAILURE);
-  }
-  plainGenerate(maze);
-  puts("successful generating plain maze");
-}
+
 
 
 void helpGen(void){
-  puts("Generate a maze with walls and passages | Receives 1 argument(s) | Maze must already be initialized\n\
-        \t\t\tUsage:\n\
-        \t\t\t\t>gen <GEN-ALGORITHM>\n\
-        \t\t\t\t>gen <GEN-ALGORITHM>\n\
-        \t\t\tHere are the available commands for <gen>:");
+  printf("%s\n%s\n\n",
+         "Generate a maze with walls and passages | Receives 1 argument(s) | Maze must already be initialized",
+         "Usage:");
+  printf("%25s\n%25s\n\n",
+         ">gen <GEN-ALGORITHM>",
+         ">g   <GEN-ALGORITHM>");
+  puts("Here are the available commands for <gen>:\n");
 
   //print the algorithms
   for (int i = 0; i<NumGenCommand(); i++){
-    printf("\t\t\t\t%s\n", GenerationCommandList[i].command);
+    printf("%10s%8s%6c\n", GenerationCommandList[i].command, "==>", *(GenerationCommandList[i].command));
+    printf("%-5c}->   %s\n", ' ', GenerationCommandList[i].description);
   }
   
   putchar('\n');
 }
 
 void helpSolve(void){
-  puts("Solve a maze | Receives 1 argument(s) | Maze must already be generated and initialized");
-  puts("\t\t\tUsage:");
-  puts("\t\t\t\t>solve <SOLVE-ALGORITHM>");
-  puts("\t\t\t\t>s     <SOLVE-ALGORITHM>");
-  puts("\t\t\tHere are the available commands for <solve>:");
+
+
+  printf("%s\n%s\n\n",
+         "Solve a maze | Receives 1 argument(s) | Maze must already be generated and initialized",
+         "Usage:");
+  printf("%29s\n%29s\n\n",
+         ">solve <SOLVE-ALGORITHM>",
+         ">s     <SOLVE-ALGORITHM>");
+  puts("Here are the available commands for <solve>:\n");
+
   //print the algorithms
-  for (int i = 0; i<NumSolveCommand(); i++){
-    printf("\t\t\t\t%s\n", SolveCommandList[i].command);
+  for (int i = 0; i<NumGenCommand(); i++){
+    printf("%10s%9s%6c\n", SolveCommandList[i].command, "==>", *(SolveCommandList[i].command));
+    printf("%-5c}->   %s\n", ' ', SolveCommandList[i].description);
+
   }
   putchar('\n');
 }

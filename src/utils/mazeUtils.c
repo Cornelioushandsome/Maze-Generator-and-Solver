@@ -1,17 +1,20 @@
 #include "./mazeUtils.h"
 
 void setStart(Maze *maze, int row, int col){
-  if (!isValidMaze(maze)){
+  if (!maze || !isValidMaze(maze) || !isValidCell(maze, row, col)){
     return;
   }
-  *CELL(maze, row, col) = START;
+  maze->start = CELL(maze, row, col);
+  *maze->start = START; 
+
 
 }
 void setEnd(Maze *maze, int row, int col){
-  if (!isValidMaze(maze)){
+  if (!maze || !isValidMaze(maze) || !isValidCell(maze, row, col)){
     return;
   }
-  *CELL(maze, row, col) = END;
+  maze->end = CELL(maze, row, col);
+  *maze->end = END; 
 }
 
 int isValidDimensions(int width, int height){

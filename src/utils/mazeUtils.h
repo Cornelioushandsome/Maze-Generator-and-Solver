@@ -30,7 +30,7 @@ enum BOOL{
 typedef struct maze{
   char *cells; //contiguous array
   int width, height;
-  //char *start, *end;
+  char *start, *end;
 } Maze;
 
 typedef struct{

@@ -36,6 +36,8 @@ Maze *initMaze(int width, int height){
   }
   newMaze->width = width;
   newMaze->height = height;
+  newMaze->start = NULL;
+  newMaze->end = NULL;
 
   return newMaze;
 
