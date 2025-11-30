@@ -52,7 +52,8 @@ void renderMaze(Maze *maze){
   int i;
   for (i = 0; i < maze->width * maze->height; i++){
     if (i % maze->width == 0) putchar('\n');
-    putchar(maze->cells[i]);
+    //putchar(maze->cells[i]);
+    (maze->cells[i] == WALL) ? printf("\u2588") : putchar(maze->cells[i]);
   }
 
   putchar('\n');

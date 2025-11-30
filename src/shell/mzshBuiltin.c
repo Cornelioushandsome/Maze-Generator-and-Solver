@@ -39,22 +39,22 @@ direction equally.",                                             &breadthFirstSe
   {"recursive", "Find any path by using \
 recursive-backtracking",                                         &depthFirstSearch}
 };
-inline void promptHelp(void (*helpfunc)(void)){
+static inline void promptHelp(void (*helpfunc)(void)){
   puts("Invalid input.");
   (helpfunc)();
   puts("Please try again.\n");
 }
 
 
-inline int NumBuiltin(){ //not defined in header because of errors
+static inline int NumBuiltin(){ //not defined in header because of errors
   return sizeof(BuiltinCommandList)/sizeof(BuiltinCommandList[0]);
 }
 
-inline int NumGenCommand(){
+static inline int NumGenCommand(){
   return sizeof(GenerationCommandList)/sizeof(GenerationCommandList[0]);
 }
 
-inline int NumSolveCommand(){
+static inline int NumSolveCommand(){
   return sizeof(SolveCommandList)/sizeof(SolveCommandList[0]);
 }
 
@@ -169,7 +169,7 @@ int mzsh_render(char **args){
     puts("Maze not initialized yet");
     return EXIT_FAILURE;
   }
-  if (!isValidMaze(GLOBAL_MAZE) || !GLOBAL_MAZE->start || !GLOBAL_MAZE->end){
+  if (!isValidMaze(GLOBAL_MAZE) /*|| !GLOBAL_MAZE->start || !GLOBAL_MAZE->end*/){
     freeMaze(GLOBAL_MAZE);
     puts("Invalid maze");
     return EXIT_FAILURE;

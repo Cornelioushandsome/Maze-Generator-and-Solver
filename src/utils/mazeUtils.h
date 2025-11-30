@@ -11,10 +11,11 @@ enum DIMENSION_BOUNDARIES{
 
 enum SYMBOLS {
   WALL  = '#',
-  BLANK = '.',
+  BLANK = ' ',
   START = 'S',
   END   = 'E'
 };
+
 
 enum COMMAND_LIMITS{
   COMMAND_BUFSIZ = 32,

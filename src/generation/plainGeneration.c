@@ -12,9 +12,9 @@ void plainGenerate(Maze *maze){
     }
   }
   
-  setStart(maze, 1, 1);
-  setEnd(maze, maze->height-2, maze->width-2);
-  
+  // setStart(maze, 1, 1);
+  // setEnd(maze, maze->height-2, maze->width-2);
+  SET_DEFAULT_START_END(maze);
 
   maze->cells[i] = '\0';
   puts("Successfully generated plain.");

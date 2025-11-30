@@ -20,7 +20,7 @@ void helpHelp(void); //....fr?
 void helpQuit(void);
 void helpRender(void);
 int helpValid(char **args);
-inline void promptHelp(void (*helpfunc)(void));
+
 //generation
 
 //solving
