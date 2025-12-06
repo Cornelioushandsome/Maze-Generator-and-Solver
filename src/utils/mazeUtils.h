@@ -12,6 +12,7 @@ enum DIMENSION_BOUNDARIES{
 enum SYMBOLS {
   WALL  = '#',
   BLANK = ' ',
+  VISITED = 'O',
   START = 'S',
   END   = 'E'
 };

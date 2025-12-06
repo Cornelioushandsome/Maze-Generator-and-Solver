@@ -93,11 +93,12 @@ int mzsh_launch(char **args){
 }
 
 int mzsh_init(char **args){ 
-  
+  if (GLOBAL_MAZE) freeMaze(GLOBAL_MAZE);
   if (!args[1] || !args[2] || helpValid(args)){
     helpInit();
     return 0;
   }
+  
   int width  = (int) atoi(args[1]);
   int height = (int) atoi(args[2]);
   if (!isValidDimensions(width, height)){

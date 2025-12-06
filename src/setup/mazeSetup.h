@@ -12,4 +12,6 @@ void setEnd(Maze *maze, int row, int col);
 void renderMaze(Maze *maze);
 void freeMaze(Maze *maze);
 
+void handleSymCases(Maze *maze, int row, int col, const char SYMBOL, const char *COLOR_ESCAPE_CODE);
+
 #endif

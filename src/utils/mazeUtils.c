@@ -23,6 +23,7 @@ int isValidDimensions(int width, int height){
     return FALSE; 
   }
   return TRUE;
+  //return (width >= MIN_WIDTH || width <= MAX_WIDTH ||height >= MIN_HEIGHT || height <= MAX_HEIGHT);
 }
 
 int isValidMaze(Maze *maze){
@@ -37,6 +38,8 @@ int isValidCell(Maze *maze, int row, int col){
     return FALSE;
   }
   return TRUE;
+
+  //return (col >= 0 || col <maze->width || row >= 0 || row <maze->height);
 }
 
 

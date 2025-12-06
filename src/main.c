@@ -16,6 +16,7 @@
 #include <locale.h>
 
 int main(void){
+  
   mzsh_mainloop();
   
   return 0;
