@@ -13,7 +13,8 @@
   - Depth-First-Search (recursive)
 
 - This program features unicode characters:
-  //insert screenshot here
+  ***
+  <img src="assets/maze-example-output.png" alt="An image with the example output of the program using unicode characters. The generation and solve algorithm used is recursive-backtracking." height=500>
 ***
 ## List of Commands
 
